@@ -7,6 +7,7 @@ class Game:
         # Inicializa a tela no tamanho 160x120 solicitado
         pyxel.init(160, 120, title="No Talent")
         
+        pyxel.load("../../assets/resource.pyxres")
         # Estado inicial do jogo
         self.state = "MENU"  # Estados possíveis: 'MENU', 'GAMEPLAY'
         
@@ -26,16 +27,15 @@ class Game:
             self.player.update()
 
     def draw_scenery(self):
-        # Chão verde (Grama)
         pyxel.cls(11)
         
-        # Árvore (Cenário simples usando formas geométricas)
-        # Tronco
-        pyxel.rect(38, 45, 12, 20, 4)
-        # Folhas (Copas em círculos)
-        pyxel.circ(35, 35, 12, 3)
-        pyxel.circ(53, 35, 12, 3)
-        pyxel.circ(44, 25, 14, 3)
+        # --- DESENHA O TILEMAP ---
+        # tm: índice do tilemap (geralmente 0 no Pyxel Editor)
+        # x, y: posição na tela onde o mapa começa a ser desenhado (0, 0)
+        # u, v: coordenada inicial dentro do tilemap (em células/tiles, ex: de onde começa a câmera)
+        # w, h: largura e altura do mapa que será renderizado (em células/tiles)
+        # 160x120 pixels equivalem a 20x15 tiles de tamanho 8x8
+        pyxel.bltm(x=0, y=0, tm=0, u=0, v=0, w=704, h=128)
 
     def draw(self):
         # Desenha o cenário de fundo compartilhado por ambos os estados

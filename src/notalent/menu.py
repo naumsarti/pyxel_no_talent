@@ -30,7 +30,7 @@ class Menu:
 
         # Efeito visual do 'Zzz' piscando perto do jogador
         if (self.blink_timer // 15) % 2 == 0:
-            pyxel.text(x=player.x + 10, y=player.y - 2, s="Zzz...", col=7)
+            pyxel.text(x=player.x + 18, y=player.y - 4, s="Zzz...", col=7)
 
         # Desenha o efeito de flash branco na transição
         if self.is_transitioning and (self.transition_timer // 2) % 2 == 0:
