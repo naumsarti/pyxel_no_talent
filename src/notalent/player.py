@@ -15,29 +15,52 @@ class Player:
         self.anim_tick = 0  # Só aumenta quando o jogador se move
         self.walk_frame = 0 # Frame final que será desenhado
 
-    def update(self):
+    def update(self, game):
         if self.is_sleeping:
             return
 
         is_moving = False
+        next_x = self.x
+        next_y = self.y
+        # Hitbox (caixa de colisão) menor que o corpo inteiro.
+        hit_left = 2     # Dá 2 pixels de folga no ombro esquerdo
+        hit_right = 13    # Dá 2 pixels de folga no ombro direito
+        hit_top = 12       # Ignora a cabeça inteira! (Colisão começa da cintura pra baixo)
+        hit_bottom = 15   # Bate exatamente na sola do pé
+
         # Movimentação restrita a 4 direções
-        # Prioriza uma direção por vez para impedir movimento diagonal
         if pyxel.btn(pyxel.KEY_W):
-            self.y -= self.speed
+            next_y -= self.speed
             self.direction = "up"
             is_moving = True
+            if game.is_solid(self.x + hit_left, next_y + hit_top) or game.is_solid(self.x + hit_right, next_y + hit_top):
+                is_moving = False
+            else:
+                self.y = next_y
         elif pyxel.btn(pyxel.KEY_S):
-            self.y += self.speed
+            next_y += self.speed
             self.direction = "down"
             is_moving = True
+            if game.is_solid(self.x + hit_left, next_y + hit_bottom) or game.is_solid(self.x + hit_right, next_y + hit_bottom):
+                is_moving = False
+            else:
+                self.y = next_y
         elif pyxel.btn(pyxel.KEY_A):
-            self.x -= self.speed
+            next_x -= self.speed
             self.direction = "left"
             is_moving = True
+            if game.is_solid(next_x + hit_left, self.y + hit_top) or game.is_solid(next_x + hit_left, self.y + hit_bottom):
+                is_moving = False
+            else:
+                self.x = next_x
         elif pyxel.btn(pyxel.KEY_D):
-            self.x += self.speed
+            next_x += self.speed
             self.direction = "right"
             is_moving = True
+            if game.is_solid(next_x + hit_right, self.y + hit_top) or game.is_solid(next_x + hit_right, self.y + hit_bottom):
+                is_moving = False
+            else:
+                self.x = next_x
 
         # Lógica de animação baseada nos frames
         if is_moving:
@@ -61,7 +84,7 @@ class Player:
                 self.walk_frame = 0  # O primeiro frame (96 para esquerda, 128 para direita) é o parado
 
         # Limites do MAPA inteiro (704x128)
-        self.x = max(0, min(self.x, 704 - self.width))
+        self.x = max(0, min(self.x, 832 - self.width))
         self.y = max(0, min(self.y, 128 - self.height))
 
     def draw(self):
