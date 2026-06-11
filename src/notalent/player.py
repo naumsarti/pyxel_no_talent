@@ -60,9 +60,9 @@ class Player:
             else:
                 self.walk_frame = 0  # O primeiro frame (96 para esquerda, 128 para direita) é o parado
 
-        # Limites da tela (160x120)
-        self.x = max(0, min(self.x, 160 - self.width))
-        self.y = max(0, min(self.y, 120 - self.height))
+        # Limites do MAPA inteiro (704x128)
+        self.x = max(0, min(self.x, 704 - self.width))
+        self.y = max(0, min(self.y, 128 - self.height))
 
     def draw(self):
          # Onde começa o primeiro frame de cada grupo de animação

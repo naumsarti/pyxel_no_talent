@@ -22,15 +22,16 @@ class Menu:
                 player.y -= 4  # Ajusta a posição para o personagem "ficar em pé"
                 change_state_callback("GAMEPLAY")
 
-    def draw(self, player):
-        # Texto centralizado de instrução
+    def draw_world(self, player):
+        # O 'Zzz' faz parte do mundo (fica fisicamente ao lado do jogador)
+        if (self.blink_timer // 15) % 2 == 0:
+            pyxel.text(x=player.x + 18, y=player.y - 4, s="Zzz...", col=7)
+
+    def draw_ui(self):
+        # O texto de instrução e o Flash são Interface (grudados na tela do monitor)
         text = "Pressione ENTER para Acordar"
         text_x = (160 - len(text) * 4) // 2
         pyxel.text(x=text_x, y=80, s=text, col=7)
-
-        # Efeito visual do 'Zzz' piscando perto do jogador
-        if (self.blink_timer // 15) % 2 == 0:
-            pyxel.text(x=player.x + 18, y=player.y - 4, s="Zzz...", col=7)
 
         # Desenha o efeito de flash branco na transição
         if self.is_transitioning and (self.transition_timer // 2) % 2 == 0:
