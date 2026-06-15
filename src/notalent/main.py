@@ -3,6 +3,7 @@ from player import Player
 from menu import Menu
 from camera import Camera
 from pause import PauseMenu
+from boss import Boss
 
 class Game:
     def __init__(self):
@@ -10,17 +11,9 @@ class Game:
         pyxel.init(160, 120, title="No Talent")
         pyxel.load("../assets/resource.pyxres")
         # Estado inicial do jogo
-        self.state = "MENU"  # Estados possíveis: 'MENU', 'GAMEPLAY'
-        
-        # Instancia a câmera passando as dimensões
-        self.camera = Camera(screen_w=160, screen_h=120, map_w=832, map_h=128)
+        self.reset_game()
 
-        # Instancia as classes do projeto
-        self.state = "MENU"
-        self.player = Player(46, 64)  # Posicionado embaixo da árvore
-        self.menu = Menu()
         self.pause_menu = PauseMenu()
-        
         pyxel.run(self.update, self.draw)
 
     def reset_game(self):
@@ -28,6 +21,8 @@ class Game:
         self.camera = Camera(screen_w=160, screen_h=120, map_w=832, map_h=128)
         self.player = Player(46, 64)
         self.menu = Menu()
+        self.boss = Boss(672, 60)
+
         self.state = "MENU"
 
     def change_state(self, new_state):
@@ -68,7 +63,15 @@ class Game:
         elif self.state == "PAUSED":
             # Passamos o jogo para o menu de pausa controlar as opções
             self.pause_menu.update(self)
-
+        
+        elif self.state == "CINEMATIC":
+            # Próximas instruções
+            pass
+        
+        elif self.state == "BATTLE":
+            # Próximas instruções
+            pass
+    
     def draw_scenery(self):
         pyxel.cls(11)
         
@@ -81,22 +84,31 @@ class Game:
         pyxel.bltm(x=0, y=0, tm=0, u=0, v=0, w=832, h=128)
 
     def draw(self):
-        self.camera.start()
-        self.draw_scenery()
+        # O cenário de fundo e os personagens só aparecem se NÃO estiver na tela de batalha pura
+        if self.state != "BATTLE":
+            self.camera.start()
+            self.draw_scenery()
+            self.boss.draw()
 
-        if self.state == "MENU":
-            self.player.draw(self.menu.blink_timer)
-            self.menu.draw_world(self.player)
+            if self.state == "MENU":
+                self.player.draw(self.menu.blink_timer)
+                self.menu.draw_world(self.player)
+            else:
+                self.player.draw()
+
+            self.camera.stop()
+            # INTERFACE (PAUSE)
+            if self.state == "MENU":
+                self.menu.draw_ui()
+            elif self.state == "PAUSED":
+                # Desenha o menu de pausa por cima de tudo
+                self.pause_menu.draw(self.player)
+            elif self.state == "CINEMATIC":
+                pass
         else:
-            self.player.draw()
-
-        # --- INTERFACE (UI) ---
-        self.camera.stop()
-        if self.state == "MENU":
-            self.menu.draw_ui()
-        elif self.state == "PAUSED":
-            # Desenha o menu de pausa por cima de tudo
-            self.pause_menu.draw(self.player)
+            # Quando estiver em BATTLE, o mapa some e desenhamos a arena aqui
+            pyxel.cls(0) # Tela preta de batalha por enquanto
+            pyxel.text(40, 50, "TELA DE BATALHA POKEMON", 7)
             
 if __name__ == "__main__":
     Game()
