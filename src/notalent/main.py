@@ -2,12 +2,12 @@ import pyxel
 from player import Player
 from menu import Menu
 from camera import Camera
+from pause import PauseMenu
 
 class Game:
     def __init__(self):
         # Inicializa a tela no tamanho 160x120 solicitado
         pyxel.init(160, 120, title="No Talent")
-        
         pyxel.load("../../assets/resource.pyxres")
         # Estado inicial do jogo
         self.state = "MENU"  # Estados possíveis: 'MENU', 'GAMEPLAY'
@@ -19,8 +19,16 @@ class Game:
         self.state = "MENU"
         self.player = Player(46, 64)  # Posicionado embaixo da árvore
         self.menu = Menu()
+        self.pause_menu = PauseMenu()
         
         pyxel.run(self.update, self.draw)
+
+    def reset_game(self):
+        """Recria todos os objetos do zero, como se ligasse o videogame agora."""
+        self.camera = Camera(screen_w=160, screen_h=120, map_w=832, map_h=128)
+        self.player = Player(46, 64)
+        self.menu = Menu()
+        self.state = "MENU"
 
     def change_state(self, new_state):
         self.state = new_state
@@ -49,10 +57,16 @@ class Game:
         if self.state == "MENU":
             self.menu.update(self.player, self.change_state)
         elif self.state == "GAMEPLAY":
-            self.player.update(self)
-
-        # Atualiza a câmera passando a posição e tamanho do jogador
-        self.camera.update(self.player.x, self.player.y, self.player.width, self.player.height)
+            # Ao apertar ENTER durante o jogo, vai para a pausa!
+            if pyxel.btnp(pyxel.KEY_RETURN):
+                self.change_state("PAUSED")
+            else:
+                self.player.update(self)
+                self.camera.update(self.player.x, self.player.y, self.player.width, self.player.height)
+                
+        elif self.state == "PAUSED":
+            # Passamos o jogo para o menu de pausa controlar as opções
+            self.pause_menu.update(self)
 
     def draw_scenery(self):
         pyxel.cls(11)
@@ -67,10 +81,7 @@ class Game:
 
     def draw(self):
         self.camera.start()
-
-        # Desenha o cenário de fundo compartilhado por ambos os estados
         self.draw_scenery()
-        # Desenha o jogador (funciona tanto para deitado quanto em pé)
         self.player.draw()
 
         if self.state == "MENU":
@@ -80,6 +91,9 @@ class Game:
         self.camera.stop()
         if self.state == "MENU":
             self.menu.draw_ui()
+        elif self.state == "PAUSED":
+            # Desenha o menu de pausa por cima de tudo
+            self.pause_menu.draw(self.player)
             
 if __name__ == "__main__":
     Game()

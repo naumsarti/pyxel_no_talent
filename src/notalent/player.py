@@ -87,17 +87,20 @@ class Player:
         self.x = max(0, min(self.x, 832 - self.width))
         self.y = max(0, min(self.y, 128 - self.height))
 
-    def draw(self):
-         # Onde começa o primeiro frame de cada grupo de animação
+    def get_current_u(self):
+        """Retorna a coordenada X (u) do sprite atual para o sistema de zoom ler."""
+        # Onde começa o primeiro frame de cada grupo de animação
         direction_base_u = {
-            "down":  0,    # Começa no pixel 0
-            "up":    48,   # Começa no pixel 48
-            "left":  96,   # Começa no pixel 96
-            "right": 128   # Começa no pixel 128
+            "down":  0,    
+            "up":    48,   
+            "left":  96,   
+            "right": 128   
         }
-
+        return direction_base_u[self.direction] + (self.walk_frame * 16)
+    
+    def draw(self):
         # Calcula a posição X (u) somando 16 pixels para cada frame que avança
-        u = direction_base_u[self.direction] + (self.walk_frame * 16)
+        u = self.get_current_u()
         
         if self.is_sleeping:
             # Se estiver dormindo, desenha o frame parado de frente (u=16)
