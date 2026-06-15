@@ -56,6 +56,7 @@ class Game:
     def update(self):
         if self.state == "MENU":
             self.menu.update(self.player, self.change_state)
+            self.camera.update(self.player.x, self.player.y, self.player.width, self.player.height)
         elif self.state == "GAMEPLAY":
             # Ao apertar ENTER durante o jogo, vai para a pausa!
             if pyxel.btnp(pyxel.KEY_RETURN):

@@ -25,13 +25,22 @@ class Menu:
     def draw_world(self, player):
         # O 'Zzz' faz parte do mundo (fica fisicamente ao lado do jogador)
         if (self.blink_timer // 15) % 2 == 0:
-            pyxel.text(x=player.x + 18, y=player.y - 4, s="Zzz...", col=7)
+            text_x = player.x + 18
+            text_y = player.y - 4
+            # Desenha a sombra primeiro deslocada em 1 pixel
+            pyxel.text(x=text_x + 1, y=text_y + 1, s="Zzz...", col=1)
+            # Desenha o texto principal por cima (Branco = 7)
+            pyxel.text(x=text_x, y=text_y, s="Zzz...", col=7)
 
     def draw_ui(self):
         # O texto de instrução e o Flash são Interface (grudados na tela do monitor)
         text = "Pressione ENTER para Acordar"
         text_x = (160 - len(text) * 4) // 2
-        pyxel.text(x=text_x, y=80, s=text, col=7)
+        text_y = 80
+        # Desenha a sombra do texto de instrução
+        pyxel.text(x=text_x + 1, y=text_y + 1, s=text, col=1)
+        # Desenha o texto principal por cima (Branco = 7)
+        pyxel.text(x=text_x, y=text_y, s=text, col=7)
 
         # Desenha o efeito de flash branco na transição
         if self.is_transitioning and (self.transition_timer // 2) % 2 == 0:
