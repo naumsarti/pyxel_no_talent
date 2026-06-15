@@ -36,7 +36,7 @@ class Menu:
         # O texto de instrução e o Flash são Interface (grudados na tela do monitor)
         text = "Pressione ENTER para Acordar"
         text_x = (160 - len(text) * 4) // 2
-        text_y = 80
+        text_y = 90
         # Desenha a sombra do texto de instrução
         pyxel.text(x=text_x + 1, y=text_y + 1, s=text, col=1)
         # Desenha o texto principal por cima (Branco = 7)

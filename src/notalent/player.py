@@ -104,7 +104,7 @@ class Player:
         
         if self.is_sleeping:
             # Se estiver dormindo, desenha o frame parado de frente (u=16)
-            pyxel.blt(self.x, self.y, 0, 16, 0, 16, 16, colkey=0)
+            pyxel.blt(self.x, self.y, 0, 160, 0, 160, 16, colkey=0)
         else:
             # Desenha o sprite correto de forma direta, sempre com largura positiva (16)
             pyxel.blt(self.x, self.y, 0, u, 0, 16, 16, colkey=0)

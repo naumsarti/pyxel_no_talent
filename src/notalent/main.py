@@ -8,7 +8,7 @@ class Game:
     def __init__(self):
         # Inicializa a tela no tamanho 160x120 solicitado
         pyxel.init(160, 120, title="No Talent")
-        pyxel.load("../../assets/resource.pyxres")
+        pyxel.load("../assets/resource.pyxres")
         # Estado inicial do jogo
         self.state = "MENU"  # Estados possíveis: 'MENU', 'GAMEPLAY'
         
