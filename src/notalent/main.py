@@ -4,6 +4,7 @@ from menu import Menu
 from camera import Camera
 from pause import PauseMenu
 from boss import Boss
+from dialogue import DialogueBox
 
 class Game:
     def __init__(self):
@@ -24,6 +25,7 @@ class Game:
         self.boss = Boss(672, 60)
         # Flag para garantir que o evento só acontece uma vez!
         self.boss_event_triggered = False
+        self.dialogue = DialogueBox()
 
         self.state = "MENU"
 
@@ -64,6 +66,17 @@ class Game:
                 if self.player.x >= 616 and not self.boss_event_triggered:
                     self.boss_event_triggered = True  # Marca que o evento já começou
                     self.change_state("CINEMATIC")    # Rouba o controle do jogador
+                    # Prepara a lista de falas (Nome, Texto)
+                    # O limite de largura da tela é de ~35 letras por linha
+                    script_inicial = [
+                        ("Orgulho", "Hmm?"), ("Orgulho", "O que e isso?"), ("Orgulho", "..."), ("Orgulho", "HAHAHA! VOCE E UM AMALDICOADO!"),
+                        ("Ban", "..."), ("Ban", "O que disse?!"),
+                        ("Orgulho", "HAHAHA! QUE EXISTENCIA MISERAVEL!"),
+                        ("Ban", "Seu... Filho da p*!")
+                    ]
+                    # Inicia o diálogo. Quando acabar, muda o estado para BATTLE
+                    self.dialogue.start(script_inicial, lambda: self.change_state("BATTLE"))
+
                 else:
                     self.camera.update(self.player.x, self.player.y, self.player.width, self.player.height)
                 
@@ -74,7 +87,8 @@ class Game:
         elif self.state == "CINEMATIC":
             # A câmera ignora o Player e passa a focar nas coordenadas do Boss
             self.camera.update(self.boss.x, self.boss.y, self.boss.width, self.boss.height, smooth=0.03)
-        
+            self.dialogue.update()
+
         elif self.state == "BATTLE":
             # Próximas instruções
             pass
@@ -111,7 +125,7 @@ class Game:
                 # Desenha o menu de pausa por cima de tudo
                 self.pause_menu.draw(self.player)
             elif self.state == "CINEMATIC":
-                pass
+                self.dialogue.draw()
         else:
             # Quando estiver em BATTLE, o mapa some e desenhamos a arena aqui
             pyxel.cls(0) # Tela preta de batalha por enquanto
