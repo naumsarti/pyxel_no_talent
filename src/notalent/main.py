@@ -83,10 +83,12 @@ class Game:
     def draw(self):
         self.camera.start()
         self.draw_scenery()
-        self.player.draw()
 
         if self.state == "MENU":
+            self.player.draw(self.menu.blink_timer)
             self.menu.draw_world(self.player)
+        else:
+            self.player.draw()
 
         # --- INTERFACE (UI) ---
         self.camera.stop()

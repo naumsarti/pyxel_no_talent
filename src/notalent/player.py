@@ -98,13 +98,15 @@ class Player:
         }
         return direction_base_u[self.direction] + (self.walk_frame * 16)
     
-    def draw(self):
+    def draw(self, menu_timer=0):
         # Calcula a posição X (u) somando 16 pixels para cada frame que avança
         u = self.get_current_u()
         
         if self.is_sleeping:
-            # Se estiver dormindo, desenha o frame parado de frente (u=16)
-            pyxel.blt(self.x, self.y, 0, 160, 0, 160, 16, colkey=0)
+            cycle_frame = menu_timer % 80
+            if cycle_frame < 35:
+                pyxel.blt(self.x, self.y, 0, 160, 0, 16, 16, colkey=0)
+            else:
+                pyxel.blt(self.x, self.y, 0, 176, 0, 16, 16, colkey=0)
         else:
-            # Desenha o sprite correto de forma direta, sempre com largura positiva (16)
             pyxel.blt(self.x, self.y, 0, u, 0, 16, 16, colkey=0)
