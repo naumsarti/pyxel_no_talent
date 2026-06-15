@@ -10,14 +10,18 @@ class Camera:
         self.x = 0
         self.y = 0
 
-    def update(self, target_x, target_y, target_w, target_h):
+    def update(self, target_x, target_y, target_w, target_h, smooth=1):
         # Calcula a posição ideal para centralizar o alvo
         ideal_x = target_x + (target_w // 2) - (self.screen_w // 2)
         ideal_y = target_y + (target_h // 2) - (self.screen_h // 2)
         
         # Trava a câmera dentro dos limites do mapa (Clamp)
-        self.x = max(0, min(ideal_x, self.map_w - self.screen_w))
-        self.y = max(0, min(ideal_y, self.map_h - self.screen_h))
+        target_clamp_x = max(0, min(ideal_x, self.map_w - self.screen_w))
+        target_clamp_y = max(0, min(ideal_y, self.map_h - self.screen_h))
+
+        # Se for menor (ex: 0.05), ela desliza suavemente até o destino
+        self.x += (target_clamp_x - self.x) * smooth
+        self.y += (target_clamp_y - self.y) * smooth
 
     def start(self):
         """Aplica o deslocamento da câmera para o mundo."""

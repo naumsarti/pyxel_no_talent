@@ -22,6 +22,8 @@ class Game:
         self.player = Player(46, 64)
         self.menu = Menu()
         self.boss = Boss(672, 60)
+        # Flag para garantir que o evento só acontece uma vez!
+        self.boss_event_triggered = False
 
         self.state = "MENU"
 
@@ -58,15 +60,20 @@ class Game:
                 self.change_state("PAUSED")
             else:
                 self.player.update(self)
-                self.camera.update(self.player.x, self.player.y, self.player.width, self.player.height)
+                # Verifica se o jogador cruzou o X e se o evento ainda não ocorreu
+                if self.player.x >= 616 and not self.boss_event_triggered:
+                    self.boss_event_triggered = True  # Marca que o evento já começou
+                    self.change_state("CINEMATIC")    # Rouba o controle do jogador
+                else:
+                    self.camera.update(self.player.x, self.player.y, self.player.width, self.player.height)
                 
         elif self.state == "PAUSED":
             # Passamos o jogo para o menu de pausa controlar as opções
             self.pause_menu.update(self)
         
         elif self.state == "CINEMATIC":
-            # Próximas instruções
-            pass
+            # A câmera ignora o Player e passa a focar nas coordenadas do Boss
+            self.camera.update(self.boss.x, self.boss.y, self.boss.width, self.boss.height, smooth=0.03)
         
         elif self.state == "BATTLE":
             # Próximas instruções
