@@ -19,6 +19,13 @@ class Player:
         if self.is_sleeping:
             return
 
+        if pyxel.btn(pyxel.KEY_LSHIFT) or pyxel.btn(pyxel.KEY_RSHIFT):
+            current_speed = 1.6
+            anim_speed_divider = 4  # Número menor = troca os frames mais rápido na corrida
+        else:
+            current_speed = 1.0     # Velocidade normal de caminhada
+            anim_speed_divider = 6  # Velocidade padrão da caminhada
+        
         is_moving = False
         next_x = self.x
         next_y = self.y
@@ -30,7 +37,7 @@ class Player:
 
         # Movimentação restrita a 4 direções
         if pyxel.btn(pyxel.KEY_W):
-            next_y -= self.speed
+            next_y -= current_speed
             self.direction = "up"
             is_moving = True
             if game.is_solid(self.x + hit_left, next_y + hit_top) or game.is_solid(self.x + hit_right, next_y + hit_top):
@@ -38,7 +45,7 @@ class Player:
             else:
                 self.y = next_y
         elif pyxel.btn(pyxel.KEY_S):
-            next_y += self.speed
+            next_y += current_speed
             self.direction = "down"
             is_moving = True
             if game.is_solid(self.x + hit_left, next_y + hit_bottom) or game.is_solid(self.x + hit_right, next_y + hit_bottom):
@@ -46,7 +53,7 @@ class Player:
             else:
                 self.y = next_y
         elif pyxel.btn(pyxel.KEY_A):
-            next_x -= self.speed
+            next_x -= current_speed
             self.direction = "left"
             is_moving = True
             if game.is_solid(next_x + hit_left, self.y + hit_top) or game.is_solid(next_x + hit_left, self.y + hit_bottom):
@@ -54,7 +61,7 @@ class Player:
             else:
                 self.x = next_x
         elif pyxel.btn(pyxel.KEY_D):
-            next_x += self.speed
+            next_x += current_speed
             self.direction = "right"
             is_moving = True
             if game.is_solid(next_x + hit_right, self.y + hit_top) or game.is_solid(next_x + hit_right, self.y + hit_bottom):
@@ -67,7 +74,7 @@ class Player:
             self.anim_tick += 1 # O tempo da animação só corre se houver movimento!
             
             # O número 6 dita a velocidade (maior = mais lento).
-            frame_index = (self.anim_tick // 6)
+            frame_index = (self.anim_tick // anim_speed_divider)
 
             if self.direction in ["down", "up"]:
                 # Alterna estritamente entre Passo 1 (0) e Passo 2 (2)
