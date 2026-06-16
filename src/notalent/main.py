@@ -5,6 +5,7 @@ from camera import Camera
 from pause import PauseMenu
 from boss import Boss
 from dialogue import DialogueBox
+from battle import BattleSystem
 
 class Game:
     def __init__(self):
@@ -26,6 +27,8 @@ class Game:
         # Flag para garantir que o evento só acontece uma vez!
         self.boss_event_triggered = False
         self.dialogue = DialogueBox()
+        self.battle = BattleSystem()
+        self.transition_timer = 0
 
         self.state = "MENU"
 
@@ -75,7 +78,7 @@ class Game:
                         ("Ban", "Seu... Filho da p*!")
                     ]
                     # Inicia o diálogo. Quando acabar, muda o estado para BATTLE
-                    self.dialogue.start(script_inicial, lambda: self.change_state("BATTLE"))
+                    self.dialogue.start(script_inicial, lambda: self.start_battle_transition())
 
                 else:
                     self.camera.update(self.player.x, self.player.y, self.player.width, self.player.height)
@@ -89,10 +92,19 @@ class Game:
             self.camera.update(self.boss.x, self.boss.y, self.boss.width, self.boss.height, smooth=0.03)
             self.dialogue.update()
 
+        elif self.state == "BATTLE_TRANSITION":
+            self.transition_timer -= 1
+            if self.transition_timer <= 0:
+                self.change_state("BATTLE")
+                
         elif self.state == "BATTLE":
-            # Próximas instruções
-            pass
-    
+            self.battle.update()
+
+    def start_battle_transition(self):
+        """Ativa um flash na tela por 45 frames antes de entrar na batalha."""
+        self.transition_timer = 45
+        self.change_state("BATTLE_TRANSITION")
+
     def draw_scenery(self):
         pyxel.cls(11)
         
@@ -106,7 +118,7 @@ class Game:
 
     def draw(self):
         # O cenário de fundo e os personagens só aparecem se NÃO estiver na tela de batalha pura
-        if self.state != "BATTLE":
+        if self.state not in ["BATTLE", "BATTLE_TRANSITION"]:
             self.camera.start()
             self.draw_scenery()
             self.boss.draw()
@@ -126,10 +138,17 @@ class Game:
                 self.pause_menu.draw(self.player)
             elif self.state == "CINEMATIC":
                 self.dialogue.draw()
-        else:
-            # Quando estiver em BATTLE, o mapa some e desenhamos a arena aqui
-            pyxel.cls(0) # Tela preta de batalha por enquanto
-            pyxel.text(40, 50, "TELA DE BATALHA POKEMON", 7)
+                
+        elif self.state == "BATTLE_TRANSITION":
+            # Pisca a tela rapidamente alternando entre Branco (7) e Preto (0)
+            if (self.transition_timer // 3) % 2 == 0:
+                pyxel.cls(7)
+            else:
+                pyxel.cls(0)
+                    
+        elif self.state == "BATTLE":
+            # Desenha olayout de Batalha
+            self.battle.draw()
             
 if __name__ == "__main__":
     Game()
