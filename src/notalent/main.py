@@ -69,6 +69,9 @@ class Game:
                 if self.player.x >= 616 and not self.boss_event_triggered:
                     self.boss_event_triggered = True  # Marca que o evento já começou
                     self.change_state("CINEMATIC")    # Rouba o controle do jogador
+                    self.boss.u_offset = 16       # Vira o Boss de lado
+                    self.player.direction = "right" # Vira o MC de lado olhando para a direita
+                    self.player.walk_frame = 0    # Garante que ele use o frame totalmente parado
                     # Prepara a lista de falas (Nome, Texto)
                     # O limite de largura da tela é de ~35 letras por linha
                     script_inicial = [

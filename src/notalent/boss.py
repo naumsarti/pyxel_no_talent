@@ -7,8 +7,9 @@ class Boss:
         self.width = 16
         self.height = 16
         self.is_visible = True  # Usaremos isso mais para a frente para fazê-lo sumir
+        self.u_offset = 0
 
     def draw(self):
         if self.is_visible:
-            # Desenha o Boss pegando o sprite em U=0, V=16 (linha 16) com tamanho 16x16
-            pyxel.blt(self.x, self.y, 0, 0, 16, self.width, self.height, colkey=0)
+            # Usa self.u_offset dinamicamente (0 para frente, 16 para o lado)
+            pyxel.blt(self.x, self.y, 0, self.u_offset, 16, self.width, self.height, colkey=0)
