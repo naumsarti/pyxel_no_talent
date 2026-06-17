@@ -77,8 +77,8 @@ class Game:
                     script_inicial = [
                         ("Orgulho", "Hmm?"), ("Orgulho", "O que e isso?"), ("Orgulho", "..."), ("Orgulho", "HAHAHA! VOCE E UM AMALDICOADO!"),
                         ("Ban", "..."), ("Ban", "O que disse?!"),
-                        ("Orgulho", "HAHAHA! QUE EXISTENCIA MISERAVEL!"),
-                        ("Ban", "Seu... Filho da p*!")
+                        ("Orgulho", "HAHAHA! UMA EXISTENCIA SEM TALENTO!"), ("Orgulho", "SUA VIDA E UMA PIADA DOS DEUSES!"),
+                        ("Ban", "DESGRACADO! VOCE NAO SABE DE NADA!")
                     ]
                     # Inicia o diálogo. Quando acabar, muda o estado para BATTLE
                     self.dialogue.start(script_inicial, lambda: self.start_battle_transition())
@@ -114,8 +114,8 @@ class Game:
                 
                 script_final = [
                     ("Orgulho", "Engracado, que existencia engracada."),
-                    ("Orgulho", "Viva e sofra."),
-                    ("Orgulho", "Matar voce seria misericordia.")
+                    ("Orgulho", "Sua vida diverte os demonios."),
+                    ("Orgulho", "Matar voce seria muita misericordia.")
                 ]
                 self.dialogue.start(script_final, lambda: self.start_epilogue())
                 

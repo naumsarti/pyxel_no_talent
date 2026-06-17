@@ -3,7 +3,7 @@ import pyxel
 class BattleSystem:
     def __init__(self):
         # Opções de ataque
-        self.options = ["Corte Diagonal", "Corte Duplo", "---", "---"]
+        self.options = ["Corte Bruto", "Corte Duplo", "---", "---"]
         self.selected = 0
         
         # Status
@@ -30,10 +30,10 @@ class BattleSystem:
         
         # As falas que ele diz nos turnos 1, 2, 3 e 4
         self.taunts = [
-            "Seus ataques sao inuteis.",
-            "Isso e tudo que voce tem?",
-            "Minha defesa e impenetravel.",
-            "Sua persistencia me entedia."
+            "Seu nome e Ban, nao e?",
+            "So lhe resta forca fisica?",
+            "Hahaha! Sem talento e sem habilidade.",
+            "Esse mundo e realmente grande."
         ]
         self.visible_chars = 0
         self.text_speed = 2
@@ -65,7 +65,7 @@ class BattleSystem:
                     self.selected -= 2
                 
             if pyxel.btnp(pyxel.KEY_RETURN):
-                if self.options[self.selected] == "Corte Diagonal":
+                if self.options[self.selected] == "Corte Bruto":
                         self.state = "ATK_DIAGONAL"
                         self.anim_timer = 0
                         self.player_mp = max(0, self.player_mp - 5)
