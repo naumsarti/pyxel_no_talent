@@ -102,6 +102,8 @@ class Game:
                 
         elif self.state == "BATTLE":
             self.battle.update()
+            if self.battle.is_finished:
+                self.change_state("POST_BATTLE_BLACK_SCREEN")
 
     def start_battle_transition(self):
         """Ativa um flash na tela por 45 frames antes de entrar na batalha."""
@@ -121,7 +123,7 @@ class Game:
 
     def draw(self):
         # O cenário de fundo e os personagens só aparecem se NÃO estiver na tela de batalha pura
-        if self.state not in ["BATTLE", "BATTLE_TRANSITION"]:
+        if self.state not in ["BATTLE", "BATTLE_TRANSITION", "POST_BATTLE_BLACK_SCREEN"]:
             self.camera.start()
             self.draw_scenery()
             self.boss.draw()
@@ -152,6 +154,9 @@ class Game:
         elif self.state == "BATTLE":
             # Desenha olayout de Batalha
             self.battle.draw()
+
+        elif self.state == "POST_BATTLE_BLACK_SCREEN":
+            pyxel.cls(0)
             
 if __name__ == "__main__":
     Game()
