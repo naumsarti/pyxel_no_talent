@@ -6,6 +6,7 @@ class Player:
         self.y = y
         self.speed = 1
         self.is_sleeping = True
+        self.is_defeated = False
         self.direction = "down"  # 'up', 'down', 'left', 'right'
         
         # Dimensões do personagem
@@ -106,6 +107,10 @@ class Player:
         return direction_base_u[self.direction] + (self.walk_frame * 16)
     
     def draw(self, menu_timer=0):
+        if self.is_defeated:
+            # Mude o 192 para a coordenada U exata do sprite do Ban deitado.
+            pyxel.blt(self.x, self.y, 0, 192, 0, 16, 16, colkey=0)
+            return
         # Calcula a posição X (u) somando 16 pixels para cada frame que avança
         u = self.get_current_u()
         

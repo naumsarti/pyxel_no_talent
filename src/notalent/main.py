@@ -103,12 +103,38 @@ class Game:
         elif self.state == "BATTLE":
             self.battle.update()
             if self.battle.is_finished:
+                self.transition_timer = 60
                 self.change_state("POST_BATTLE_BLACK_SCREEN")
+
+        elif self.state == "POST_BATTLE_BLACK_SCREEN":
+            self.transition_timer -= 1
+            if self.transition_timer <= 0:
+                self.change_state("POST_BATTLE_CINEMATIC")
+                self.player.is_defeated = True # Derruba o Ban
+                
+                script_final = [
+                    ("Orgulho", "Engracado, que existencia engracada."),
+                    ("Orgulho", "Viva e sofra."),
+                    ("Orgulho", "Matar voce seria misericordia.")
+                ]
+                self.dialogue.start(script_final, lambda: self.start_epilogue())
+                
+        elif self.state == "POST_BATTLE_CINEMATIC":
+            self.dialogue.update()
+            
+        elif self.state == "EPILOGUE":
+            self.transition_timer += 1
 
     def start_battle_transition(self):
         """Ativa um flash na tela por 45 frames antes de entrar na batalha."""
         self.transition_timer = 45
         self.change_state("BATTLE_TRANSITION")
+
+    def start_epilogue(self):
+        """Disparado quando a fala final do boss acaba"""
+        self.boss.is_visible = False # O Boss some do mapa!
+        self.transition_timer = 0    # Reseta o timer para o texto final
+        self.change_state("EPILOGUE")
 
     def draw_scenery(self):
         pyxel.cls(11)
@@ -122,8 +148,8 @@ class Game:
         pyxel.bltm(x=0, y=0, tm=0, u=0, v=0, w=832, h=128)
 
     def draw(self):
-        # O cenário de fundo e os personagens só aparecem se NÃO estiver na tela de batalha pura
-        if self.state not in ["BATTLE", "BATTLE_TRANSITION", "POST_BATTLE_BLACK_SCREEN"]:
+        # O cenário de fundo e os personagens só aparecem se NÃO estiver na tela de batalha
+        if self.state not in ["BATTLE", "BATTLE_TRANSITION", "POST_BATTLE_BLACK_SCREEN", "EPILOGUE"]:
             self.camera.start()
             self.draw_scenery()
             self.boss.draw()
@@ -141,7 +167,7 @@ class Game:
             elif self.state == "PAUSED":
                 # Desenha o menu de pausa por cima de tudo
                 self.pause_menu.draw(self.player)
-            elif self.state == "CINEMATIC":
+            elif self.state in ["CINEMATIC", "POST_BATTLE_CINEMATIC"]:
                 self.dialogue.draw()
                 
         elif self.state == "BATTLE_TRANSITION":
@@ -157,6 +183,25 @@ class Game:
 
         elif self.state == "POST_BATTLE_BLACK_SCREEN":
             pyxel.cls(0)
+            
+        elif self.state == "EPILOGUE":
+            pyxel.cls(0) # Fundo preto
+            
+            if 30 < self.transition_timer < 240:
+                t1 = "Ban ficou desacordado por horas."
+                pyxel.text((160 - len(t1) * 4) // 2, 45, t1, 7)
+                
+            if 90 < self.transition_timer < 240:
+                t2 = "Ao anoitecer, ele acordou"
+                t3 = "e voltou a guilda."
+                pyxel.text((160 - len(t2) * 4) // 2, 60, t2, 7)
+                pyxel.text((160 - len(t3) * 4) // 2, 70, t3, 7)
+                
+            if self.transition_timer > 240:
+                t4 = "Ban retornara em"
+                t5 = "VINGADORES: DOOMSDAY"
+                pyxel.text((160 - len(t4) * 4) // 2, 50, t4, 7)
+                pyxel.text((160 - len(t5) * 4) // 2, 65, t5, 10)
             
 if __name__ == "__main__":
     Game()
