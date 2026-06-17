@@ -185,23 +185,29 @@ class Game:
             pyxel.cls(0)
             
         elif self.state == "EPILOGUE":
-            pyxel.cls(0) # Fundo preto
+            pyxel.cls(0)
             
-            if 30 < self.transition_timer < 240:
+            def draw_typewriter(text, x, y, color, start_time, timer, speed=2):
+                if timer > start_time:
+                    chars_to_show = (timer - start_time) // speed
+                    visible_text = text[:chars_to_show]
+                    pyxel.text(x, y, visible_text, color)
+
+            if self.transition_timer < 240:
                 t1 = "Ban ficou desacordado por horas."
-                pyxel.text((160 - len(t1) * 4) // 2, 45, t1, 7)
-                
-            if 90 < self.transition_timer < 240:
+                draw_typewriter(t1, (160 - len(t1) * 4) // 2, 45, 7, start_time=30, timer=self.transition_timer)
                 t2 = "Ao anoitecer, ele acordou"
+                draw_typewriter(t2, (160 - len(t2) * 4) // 2, 60, 7, start_time=100, timer=self.transition_timer)
                 t3 = "e voltou a guilda."
-                pyxel.text((160 - len(t2) * 4) // 2, 60, t2, 7)
-                pyxel.text((160 - len(t3) * 4) // 2, 70, t3, 7)
-                
-            if self.transition_timer > 240:
+                draw_typewriter(t3, (160 - len(t3) * 4) // 2, 70, 7, start_time=140, timer=self.transition_timer)
+
+            else:
                 t4 = "Ban retornara em"
-                t5 = "VINGADORES: DOOMSDAY"
-                pyxel.text((160 - len(t4) * 4) // 2, 50, t4, 7)
-                pyxel.text((160 - len(t5) * 4) // 2, 65, t5, 10)
+                draw_typewriter(t4, (160 - len(t4) * 4) // 2, 50, 7, start_time=270, timer=self.transition_timer)
+                
+                if self.transition_timer > 420:
+                    t5 = "VINGADORES: DOOMSDAY"
+                    pyxel.text((160 - len(t5) * 4) // 2, 65, t5, 10)
             
 if __name__ == "__main__":
     Game()
